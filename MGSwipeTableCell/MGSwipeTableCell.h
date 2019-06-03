@@ -164,6 +164,8 @@ typedef NS_ENUM(NSInteger, MGSwipeEasingFunction) {
  **/
 -(BOOL) swipeTableCell:(nonnull MGSwipeTableCell*) cell canSwipe:(MGSwipeDirection) direction fromPoint:(CGPoint) point;
 -(BOOL) swipeTableCell:(nonnull MGSwipeTableCell*) cell canSwipe:(MGSwipeDirection) direction DEPRECATED_ATTRIBUTE; //backwards compatibility
+-(void) didBeginTouch:(nonnull MGSwipeTableCell*) cell;
+-(void) didEndTouch:(nonnull MGSwipeTableCell*) cell;
 
 /**
  * Delegate method invoked when the current swipe state changes
