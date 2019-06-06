@@ -1341,7 +1341,9 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
     CGPoint current = [gesture translationInView:self];
     
     if (gesture.state == UIGestureRecognizerStateBegan) {
-        [_delegate didBeginTouch:self];
+        if (_delegate && [_delegate respondsToSelector:@selector(didBeginTouch:)]) {
+            [_delegate didBeginTouch:self];
+        }
         [self invalidateDisplayLink];
 
         if (!_preservesSelectionStatus)
@@ -1370,7 +1372,9 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
         self.swipeOffset = [self filterSwipe:offset];
     }
     else {
-        [_delegate didEndTouch:self];
+        if (_delegate && [_delegate respondsToSelector:@selector(didEndTouch:)]) {
+            [_delegate didEndTouch:self];
+        }
         __weak MGSwipeButtonsView * expansion = _activeExpansion;
         if (expansion) {
             __weak UIView * expandedButton = [expansion getExpandedButton];
