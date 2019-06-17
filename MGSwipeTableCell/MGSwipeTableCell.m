@@ -1341,9 +1341,10 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
     CGPoint current = [gesture translationInView:self];
     
     if (gesture.state == UIGestureRecognizerStateBegan) {
-        if (_delegate && [_delegate respondsToSelector:@selector(didBeginTouch:)]) {
-            [_delegate didBeginTouch:self];
-        }
+//        if (_delegate && [_delegate respondsToSelector:@selector(didBeginTouch:)]) {
+//            [_delegate didBeginTouch:self];
+//        }
+        [self parentTable].userInteractionEnabled = NO;
         [self invalidateDisplayLink];
 
         if (!_preservesSelectionStatus)
@@ -1372,9 +1373,10 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
         self.swipeOffset = [self filterSwipe:offset];
     }
     else {
-        if (_delegate && [_delegate respondsToSelector:@selector(didEndTouch:)]) {
-            [_delegate didEndTouch:self];
-        }
+//        if (_delegate && [_delegate respondsToSelector:@selector(didEndTouch:)]) {
+//            [_delegate didEndTouch:self];
+//        }
+        [self parentTable].userInteractionEnabled = YES;
         __weak MGSwipeButtonsView * expansion = _activeExpansion;
         if (expansion) {
             __weak UIView * expandedButton = [expansion getExpandedButton];
