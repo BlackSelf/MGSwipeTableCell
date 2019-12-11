@@ -622,6 +622,7 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
     bool _overlayEnabled;
     UITableViewCellSelectionStyle _previusSelectionStyle;
     NSMutableSet * _previusHiddenViews;
+    UITableViewCellAccessoryType _previusAccessoryType;
     BOOL _triggerStateChanges;
     
     MGSwipeAnimationData * _animationData;
@@ -921,7 +922,7 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
         [_tableInputOverlay removeFromSuperview];
         _tableInputOverlay = nil;
     }
-    
+
     if (reselectCellIfNeeded) {
         self.selectionStyle = _previusSelectionStyle;
         NSArray * selectedRows = self.parentTable.indexPathsForSelectedRows;
@@ -1037,6 +1038,19 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
 
 -(void) setAccesoryViewsHidden: (BOOL) hidden
 {
+    if (@available(iOS 12, *)) {
+        // Hide the accessory to prevent blank box being displayed in iOS13 / iOS12
+        // (blank area would be overlayed in accessory area when using cell in storyboard view)
+        // See: https://github.com/MortimerGoro/MGSwipeTableCell/issues/337
+        if (hidden) {
+            _previusAccessoryType = self.accessoryType;
+            self.accessoryType = UITableViewCellAccessoryNone;
+        } else if (self.accessoryType == UITableViewCellAccessoryNone) {
+            self.accessoryType = _previusAccessoryType;
+            _previusAccessoryType = UITableViewCellAccessoryNone;
+        }
+    }
+    
     if (self.accessoryView) {
         self.accessoryView.hidden = hidden;
     }
@@ -1343,9 +1357,6 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
     CGPoint current = [gesture translationInView:self];
     
     if (gesture.state == UIGestureRecognizerStateBegan) {
-//        if (_delegate && [_delegate respondsToSelector:@selector(didBeginTouch:)]) {
-//            [_delegate didBeginTouch:self];
-//        }
         [self parentTable].userInteractionEnabled = NO;
         [self invalidateDisplayLink];
 
@@ -1375,9 +1386,6 @@ static inline CGFloat mgEaseInOutBounce(CGFloat t, CGFloat b, CGFloat c) {
         self.swipeOffset = [self filterSwipe:offset];
     }
     else {
-//        if (_delegate && [_delegate respondsToSelector:@selector(didEndTouch:)]) {
-//            [_delegate didEndTouch:self];
-//        }
         [self parentTable].userInteractionEnabled = YES;
         __weak MGSwipeButtonsView * expansion = _activeExpansion;
         if (expansion) {
